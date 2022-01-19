@@ -26,24 +26,44 @@ var upload = multer({
 });
 
 module.exports = app => {
-  const profile = require("../controllers/controller.js");
-
+  const { db_profile, db_auction, db_bid, db_history, get_hot_auction, transfer, settle_auction, mint, update_price } = require("../controllers/controller.js");
   var router = require("express").Router();
 
-  // Create a new Tutorial
-  router.post("/create", profile.create);
+  // *************** Profile ******************************
+  // Create a new profile
+  router.post("/profile/create", db_profile().create);
 
-  // Retrieve a single Tutorial with account
-  router.get("/:account", profile.findOne);
+  // Retrieve a single profile with account
+  router.get("/profile/:account", db_profile().findOne);
 
-  // Update a Tutorial with account
-  router.put("/:account", upload.single('profileImg'), profile.update);
+  // Update a profile with account
+  router.put("/profile/:account", upload.single('profileImg'), db_profile().update);
 
-  // Delete a Tutorial with account
-  router.delete("/:account", profile.delete);
+  // ************** Auction **************************
+  router.post("/auction/create", db_auction().create);
+  router.post("/auction/update", db_auction().update);
 
-  // Create a new Tutorial
-  router.delete("/", profile.deleteAll);
+  // ************* MakeBid ***************************
+  router.post("/bid/create", db_bid().create);
+  router.post("/bid/all", db_bid().findAll);
 
-  app.use("/api/profile", router);
+  // ************ History **************************
+  router.post("/history/all", db_history().findAll);
+
+  // ********** Get Hot Auction *******************
+  router.get("/hotauction", get_hot_auction().get);
+
+  // ********** Transfer ******************
+  router.post("/transfer", transfer().create);
+
+  // ********** Settle Auction ************
+  router.post("/settleauction", settle_auction().create);
+
+  // ********* Update Price ************
+  router.post("/updateprice", update_price().create);
+
+  // ********** mint **************
+  router.post("/mint", mint().create);
+  
+  app.use("/api", router);
 };

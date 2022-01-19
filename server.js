@@ -1,12 +1,12 @@
 const express = require("express");
-
+require("dotenv").config();
 // const bodyParser = require("body-parser"); /* deprecated */
 const cors = require("cors");
 
 const app = express();
 
 var corsOptions = {
-  origin: "http://localhost:3000"
+  origin: process.env.FRONTEND_HOST
 };
 
 app.use(cors(corsOptions));
