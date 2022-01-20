@@ -46,6 +46,7 @@ module.exports = app => {
   // ************* MakeBid ***************************
   router.post("/bid/create", db_bid().create);
   router.post("/bid/all", db_bid().findAll);
+  router.post("/bid/findone", db_bid().find);
 
   // ************ History **************************
   router.post("/history/all", db_history().findAll);

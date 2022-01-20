@@ -255,7 +255,36 @@ const db_bid = () => {
     });
   };
 
-  return { create, findAll }
+  find = (req, res) => {
+    Auction.find({tokenId: req.body.tokenId, owner: req.body.nftOwner, status: "create"})
+    .then( data => {
+      if(!data) return
+      const cond = {
+        auction_id: data[0]._id,
+        bidder: req.body.bidder,
+        status: "bid"
+      }
+      
+      Bid.find(cond)
+      .then( data => {
+        res.send(data);
+      })
+      .catch(err => {
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while finding the bid."
+        });
+      });
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while finding the bid."
+      });
+    });
+  }
+
+  return { create, findAll, find }
 }
 
 const db_history = () => {
