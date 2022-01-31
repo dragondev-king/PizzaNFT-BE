@@ -375,7 +375,25 @@ const settle_auction = () => {
   create = (req, res) => {
     try {
       create_history(req.body.tokenId, AUCTION_SETTLE, req.body.owner, req.body.from, req.body.to);
-      res.send({msg: "successfully"});
+      let cond = {
+        tokenId: req.body.tokenId,
+        owner: req.body.owner,
+        status: 'create'
+      }
+      Auction.updateOne(cond, { $set: { status: "end" }}, { useFindAndModify: false })
+      .then(data => {
+        if (!data) {
+          res.status(404).send();
+        } else {
+          res.send({ message: "Auction was end successfully." });
+          create_history(req.body.tokenId, AUCTION_CANCEL, req.body.owner);
+        } 
+      })
+      .catch(err => {
+        res.status(500).send({
+          message: "Error end auction with owner=" + req.body.owner
+        });
+      });
     } catch (error) {
       res.status(500).send({
         message: error.message
