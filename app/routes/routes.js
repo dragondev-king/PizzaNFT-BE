@@ -26,7 +26,7 @@ var upload = multer({
 });
 
 module.exports = app => {
-  const { db_profile, db_auction, db_bid, db_history, get_hot_auction, transfer, settle_auction, mint, update_price } = require("../controllers/controller.js");
+  const { db_profile, db_auction, db_bid, db_history, get_hot_auction, transfer, settle_auction, mint, update_price, add_follow } = require("../controllers/controller.js");
   var router = require("express").Router();
 
   // *************** Profile ******************************
@@ -38,6 +38,8 @@ module.exports = app => {
 
   // Update a profile with account
   router.put("/profile/:account", upload.single('profileImg'), db_profile().update);
+  // Update a profile Info without profile IMG
+  router.put("/profileNoProfile/:account", db_profile().updateNoImg);
 
   // ************** Auction **************************
   router.post("/auction/create", db_auction().create);
@@ -65,6 +67,11 @@ module.exports = app => {
 
   // ********** mint **************
   router.post("/mint", mint().create);
+
+  // ********** Follow action ********
+  router.post("/follow/create", add_follow().create);
+
+  router.post("/follow/all", add_follow().findAll);
   
   app.use("/api", router);
 };

@@ -65,5 +65,21 @@ module.exports = mongoose => {
   });
   const History = mongoose.model("history", history)
 
-  return { Profile, Auction, Bid, History };
+  var follow = mongoose.Schema(
+    {
+      owner: String,
+      followAccount: String,
+      state: String // true or false
+    },
+    { timestamps: true }
+  )
+  follow.method("toJSON", function() {
+    const { __v, _id, ...object } = this.toObject();
+    object.id = _id;
+    return object;
+  });
+
+  const Follow = mongoose.model("follow", follow)
+
+  return { Profile, Auction, Bid, History,  Follow};
 };

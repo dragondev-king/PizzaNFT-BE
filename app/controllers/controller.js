@@ -4,6 +4,7 @@ const Profile = db.table.Profile;
 const Auction = db.table.Auction;
 const Bid = db.table.Bid;
 const History = db.table.History;
+const Follow = db.table.Follow;
 
 const create_history = (tokenId, event, owner, from="", to="", prevPrice="", currPrice="") => {
   try {
@@ -69,12 +70,11 @@ const db_profile = () => {
   
     Profile.find({account:account})
       .then(data => {
-        if (!data) {
+        if (data.length == 0) {
           // Create a profile
           const profile = new Profile({
             account: account,
           });
-  
           // Save profile in the database
           profile
             .save(profile)
@@ -130,7 +130,36 @@ const db_profile = () => {
       });
   };
 
-  return { create, findOne, update}
+  updateNoImg = (req, res) => {
+    if (!req.body) {
+      return res.status(400).send({
+        message: "Data to update can not be empty!"
+      });
+    }
+  
+    const account = req.params.account;
+  console.log(req.body);
+    const profile ={$set: {
+      name: req.body.name,
+      profileUrl: req.body.profileUrl
+    }};
+  
+    Profile.updateOne({account: account}, profile, { useFindAndModify: false })
+      .then(data => {
+        if (!data) {
+          res.status(404).send({
+            message: `Cannot update profile with account=${account}. Maybe profile was not found!`
+          });
+        } else res.send({ message: "profile was updated successfully." });
+      })
+      .catch(err => {
+        res.status(500).send({
+          message: "Error updating profile with account=" + account
+        });
+      });
+  };
+
+  return { create, findOne, update, updateNoImg}
 }
 
 const db_auction = () => {
@@ -205,24 +234,27 @@ const db_bid = () => {
 
     Auction.find({tokenId: req.body.tokenId, owner: req.body.nftOwner, status: "create"})
     .then( data => {
-      if(!data) return
-      const bid = new Bid({
-        auction_id: data[0]._id,
-        bidder: req.body.bidder,
-        amount: req.body.amount,
-        status: "bid"
-      })
-
-      bid.save(bid)
-      .then(data => {
-        res.send(data);
-      })
-      .catch(err => {
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while creating the bid."
+      if(data) {
+        const bid = new Bid({
+          auction_id: data[0]._id,
+          bidder: req.body.bidder,
+          amount: req.body.amount,
+          status: "bid"
+        })
+  
+        bid.save(bid)
+        .then(data => {
+          res.send(data);
+        })
+        .catch(err => {
+          res.status(500).send({
+            message:
+              err.message || "Some error occurred while creating the bid."
+          });
         });
-      });
+      } else {
+        res.send(data);
+      }
     })
     
   }
@@ -258,23 +290,26 @@ const db_bid = () => {
   find = (req, res) => {
     Auction.find({tokenId: req.body.tokenId, owner: req.body.nftOwner, status: "create"})
     .then( data => {
-      if(!data) return
-      const cond = {
-        auction_id: data[0]._id,
-        bidder: req.body.bidder,
-        status: "bid"
-      }
-      
-      Bid.find(cond)
-      .then( data => {
-        res.send(data);
-      })
-      .catch(err => {
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while finding the bid."
+      if(data.length == 0) {
+        const cond = {
+          auction_id: data[0]._id,
+          bidder: req.body.bidder,
+          status: "bid"
+        }
+        
+        Bid.find(cond)
+        .then( data => {
+          res.send(data);
+        })
+        .catch(err => {
+          res.status(500).send({
+            message:
+              err.message || "Some error occurred while finding the bid."
+          });
         });
-      });
+      } else {
+        res.send(data);
+      }
     })
     .catch(err => {
       res.status(500).send({
@@ -436,4 +471,56 @@ const update_price = () => {
   return { create }
 }
 
-module.exports = { db_profile, db_auction, db_bid, db_history, get_hot_auction, transfer, settle_auction, mint, update_price }
+const add_follow = () => {
+  create = (req, res) => {
+    // Validate request
+    if (!req.body.owner) {
+      res.status(400).send({ message: "Content can not be empty!" });
+      return;
+    }
+  
+    // Create a profile
+    const follow = new Follow({
+      owner: req.body.owner,
+      followAccount: req.body.followAccount,
+      state: "true"
+    });
+  
+    // Save profile in the database
+    follow
+      .save(follow)
+      .then(data => {
+        res.send(data);
+      })
+      .catch(err => {
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while creating the profile."
+        });
+      });
+
+    };
+
+  findAll = (req, res) => {
+      const owner = req.body.owner;
+      const cond = {
+        owner: owner,
+        state: 'true'
+      }
+
+      Follow.find(cond)
+      .then(data => {
+        res.send({"followInfos":data});
+      })
+      .catch(err => {
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while retrieving Bids."
+        });
+      });
+    };
+
+    return { create, findAll }
+}
+
+module.exports = { db_profile, db_auction, db_bid, db_history, get_hot_auction, transfer, settle_auction, mint, update_price, add_follow }
