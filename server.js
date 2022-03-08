@@ -9,7 +9,7 @@ var corsOptions = {
   origin: process.env.FRONTEND_HOST
 };
 
-app.use(cors(corsOptions));
+app.use(cors());
 
 // parse requests of content-type - application/json
 app.use(express.json());  /* bodyParser.json() is deprecated */

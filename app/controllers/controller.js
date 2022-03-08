@@ -239,6 +239,7 @@ const db_bid = () => {
           auction_id: data[0]._id,
           bidder: req.body.bidder,
           amount: req.body.amount,
+          recipient: req.body.recipient,
           status: "bid"
         })
   

@@ -34,7 +34,8 @@ module.exports = mongoose => {
     {
       auction_id: String,
       bidder: String,
-      amount: String, 
+      amount: String,
+      recipient: String,
       status: String, //bid, cancel, win
     },
     { timestamps: true }
