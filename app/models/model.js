@@ -4,7 +4,10 @@ module.exports = mongoose => {
       account: String,
       name: String,
       profileImg: String,
-      profileUrl: String
+      profileUrl: String,
+      coverImg: String,
+      email: String,
+      facebook: String,
     },
     { timestamps: true }
   );

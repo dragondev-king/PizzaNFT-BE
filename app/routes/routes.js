@@ -37,7 +37,7 @@ module.exports = app => {
   router.get("/profile/:account", db_profile().findOne);
 
   // Update a profile with account
-  router.put("/profile/:account", upload.single('profileImg'), db_profile().update);
+  router.put("/profile/:account", upload.fields([{name: 'profileImg', maxCount: 1}, {name: 'coverImg', maxCount: 1}]), db_profile().update);
   // Update a profile Info without profile IMG
   router.put("/profileNoProfile/:account", db_profile().updateNoImg);
 

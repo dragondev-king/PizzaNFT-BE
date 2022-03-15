@@ -108,13 +108,15 @@ const db_profile = () => {
     const url = req.protocol + '://' + req.get('host')
   
     const account = req.params.account;
-  
+    
     const profile ={$set: {
       name: req.body.name,
-      profileImg: url + '/profiles/' + req.file.filename,
-      profileUrl: req.body.profileUrl
+      profileUrl: req.body.profileUrl,
+      email: req.body.email,
+      facebook: req.body.facebook,
     }};
-  
+    if(req.files['profileImg']) profile.$set.profileImg = url + '/profiles/' + req.files['profileImg'][0].filename
+    if(req.files['coverImg']) profile.$set.coverImg = url + '/profiles/' + req.files['coverImg'][0].filename
     Profile.updateOne({account: account}, profile, { useFindAndModify: false })
       .then(data => {
         if (!data) {
