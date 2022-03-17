@@ -6,10 +6,11 @@ const cors = require("cors");
 const app = express();
 
 var corsOptions = {
-  origin: process.env.FRONTEND_HOST
+  origin: 'https://pizzanft.studio:80',
+  methods: "GET, PUT, POST, DELETE"
 };
 
-app.use(cors());
+app.use(cors(corsOptions));
 
 // parse requests of content-type - application/json
 app.use(express.json());  /* bodyParser.json() is deprecated */
