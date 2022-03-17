@@ -6,11 +6,17 @@ const cors = require("cors");
 const app = express();
 
 var corsOptions = {
-  origin: process.env.FRONTEND_HOST
+  origin: 'https://pizzanft.studio',
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 };
 
-app.use(cors());
+app.use(cors(corsOptions));
 
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "https://pizzanft.studio");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+})
 // parse requests of content-type - application/json
 app.use(express.json());  /* bodyParser.json() is deprecated */
 
