@@ -104,9 +104,9 @@ const db_profile = () => {
         message: "Data to update can not be empty!"
       });
     }
-  
+ // console.log(req.protocol, 'protocol')  
     const url = req.protocol + '://' + req.get('host')
-  
+   // const url = 'https://' + req.get('host')
     const account = req.params.account;
     
     const profile ={$set: {
@@ -123,7 +123,7 @@ const db_profile = () => {
           res.status(404).send({
             message: `Cannot update profile with account=${account}. Maybe profile was not found!`
           });
-        } else res.send({ message: "profile was updated successfully." });
+        } else res.send({ message: "profile was updated successfully.", data: data });
       })
       .catch(err => {
         res.status(500).send({
@@ -140,7 +140,6 @@ const db_profile = () => {
     }
   
     const account = req.params.account;
-  console.log(req.body);
     const profile ={$set: {
       name: req.body.name,
       profileUrl: req.body.profileUrl
