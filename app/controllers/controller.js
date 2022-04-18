@@ -105,8 +105,8 @@ const db_profile = () => {
       });
     }
  // console.log(req.protocol, 'protocol')  
-    const url = req.protocol + '://' + req.get('host')
-   // const url = 'https://' + req.get('host')
+    const url = 'https' + '://' + req.get('host')
+   // const url = 'https://dck12vch2w2i7.cloudfront.net'
     const account = req.params.account;
     
     const profile ={$set: {
