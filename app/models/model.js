@@ -8,6 +8,7 @@ module.exports = mongoose => {
       coverImg: String,
       email: String,
       facebook: String,
+      bio: String
     },
     { timestamps: true }
   );
