@@ -105,8 +105,8 @@ const db_profile = () => {
       });
     }
  // console.log(req.protocol, 'protocol')  
-    const url = req.protocol + '://' + req.get('host')
-   // const url = 'https://' + req.get('host')
+    const url = 'https' + '://' + req.get('host')
+   // const url = 'https://dck12vch2w2i7.cloudfront.net'
     const account = req.params.account;
     
     const profile ={$set: {
@@ -114,6 +114,7 @@ const db_profile = () => {
       profileUrl: req.body.profileUrl,
       email: req.body.email,
       facebook: req.body.facebook,
+      bio: req.body.bio
     }};
     if(req.files['profileImg']) profile.$set.profileImg = url + '/profiles/' + req.files['profileImg'][0].filename
     if(req.files['coverImg']) profile.$set.coverImg = url + '/profiles/' + req.files['coverImg'][0].filename
