@@ -8,7 +8,8 @@ async function getAllItems() {
   console.log('---------')
   let cursor = ""
   do {
-    const { data } = await axios(`https://deep-index.moralis.io/api/v2/nft/${process.env.PIZZA_NFT_CONTRACT_ADDRESS}?chain=bsc&format=decimal&cursor=${cursor}`, {
+    try {
+      const { data } = await axios(`https://deep-index.moralis.io/api/v2/nft/${process.env.PIZZA_NFT_CONTRACT_ADDRESS}?chain=bsc&format=decimal&cursor=${cursor}`, {
       headers: {
         'x-api-key': process.env.MORALIS_KEY
       }
@@ -25,6 +26,9 @@ async function getAllItems() {
       })
     }
     cursor = data.cursor
+    } catch (err) {
+      console.log(err)
+    }
   } while (cursor != '' && cursor != null)
 
   // console.log('owners:', owners, 'total owners:', Object.keys(owners).length)
@@ -35,7 +39,8 @@ async function getAllOwners() {
   console.log('==============')
   let cursor = ""
   do {
-    const { data } = await axios(`https://deep-index.moralis.io/api/v2/nft/${process.env.PIZZA_NFT_CONTRACT_ADDRESS}/owners?chain=bsc&format=decimal&cursor=${cursor}`, {
+    try {
+      const { data } = await axios(`https://deep-index.moralis.io/api/v2/nft/${process.env.PIZZA_NFT_CONTRACT_ADDRESS}/owners?chain=bsc&format=decimal&cursor=${cursor}`, {
       headers: {
         'x-api-key': process.env.MORALIS_KEY
       }
@@ -54,6 +59,9 @@ async function getAllOwners() {
       })
     }
     cursor = data.cursor
+    } catch (err) {
+      console.log(err)
+    }
   } while (cursor != '' && cursor != null)
 
   // console.log('owners:', owners, 'total owners:', Object.keys(owners).length)
