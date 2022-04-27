@@ -530,9 +530,14 @@ const add_follow = () => {
 
 const getNfts = () => {
   get = (req, res) => {
-    NftItem.find({}, {tokenId: true})
+    const offset = Number(req.query.offset)
+    const limit = Number(req.query.limit)
+    NftItem.find({}, {tokenId: true}).skip(offset).limit(limit)
     .then(data => {
-      res.send({"nftIDs": data})
+      NftItem.estimatedDocumentCount()
+      .then(count => {
+        res.send({total: count, "nftIDs": data})
+      })
     })
     .catch(err => {
       res.status(500).send({
@@ -548,7 +553,10 @@ const getOwners = () => {
   get = (req, res) => {
     Owner.find({})
     .then(data => {
-      res.send({"owners": data})
+      Owner.estimatedDocumentCount()
+      .then(count => {
+        res.send({total: count, "owners": data})
+      })
     })
     .catch(err => {
       res.status(500).send({
