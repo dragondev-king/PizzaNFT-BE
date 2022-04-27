@@ -567,4 +567,21 @@ const getOwners = () => {
 
   return { get }
 }
-module.exports = { db_profile, db_auction, db_bid, db_history, get_hot_auction, transfer, settle_auction, mint, update_price, add_follow, getNfts, getOwners }
+
+const getNftsByAccount = () => {
+  get = (req, res) => {
+    const offset = Number(req.query.offset)
+    const limit = Number(req.query.limit)
+    const account = req.params.account.toLowerCase()
+    Owner.find({ownerOf: account})
+    .then(total => {
+      Owner.find({ownerOf: account}, {tokenId: true}).skip(offset).limit(limit)
+      .then((data) => {
+        res.send({total: total.length, "nftIDs": data})
+      })
+    })
+  }
+
+  return { get }
+}
+module.exports = { db_profile, db_auction, db_bid, db_history, get_hot_auction, transfer, settle_auction, mint, update_price, add_follow, getNfts, getOwners, getNftsByAccount }
