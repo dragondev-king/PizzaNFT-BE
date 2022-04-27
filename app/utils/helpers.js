@@ -17,7 +17,7 @@ async function getAllItems() {
     // console.log(`Got page ${data.page} of ${Math.ceil(data.total / data.page_size)}, ${data.total} total`)
     for (const item of data.result) {
       // owners[owner.owner_of] = {amount: owner.amount, owner: owner.owner_of, tokenId: owner.token_id, tokenAddress: owner.token_address}
-      NftItem.findOneAndUpdate({tokenId: item.token_id}, {
+      await NftItem.findOneAndUpdate({tokenId: item.token_id}, {
         tokenId: item.token_id,
       },{
         new: true,
@@ -32,6 +32,7 @@ async function getAllItems() {
 
 
 async function getAllOwners() {
+  console.log('==============')
   let cursor = ""
   do {
     const { data } = await axios(`https://deep-index.moralis.io/api/v2/nft/${process.env.PIZZA_NFT_CONTRACT_ADDRESS}/owners?chain=bsc&format=decimal&cursor=${cursor}`, {
@@ -43,7 +44,7 @@ async function getAllOwners() {
     // console.log(`Got page ${data.page} of ${Math.ceil(data.total / data.page_size)}, ${data.total} total`)
     for (const owner of data.result) {
       // owners[owner.owner_of] = {amount: owner.amount, owner: owner.owner_of, tokenId: owner.token_id, tokenAddress: owner.token_address}
-      Owner.findOneAndUpdate({tokenId: owner.token_id}, {
+      await Owner.findOneAndUpdate({tokenId: owner.token_id, tokenAddress: owner.token_address, ownerOf: owner.owner_of}, {
         tokenAddress:owner.token_address,
         tokenId: owner.token_id,
         ownerOf: owner.owner_of

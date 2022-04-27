@@ -5,6 +5,8 @@ const Auction = db.table.Auction;
 const Bid = db.table.Bid;
 const History = db.table.History;
 const Follow = db.table.Follow;
+const NftItem = db.table.NftItem
+const Owner = db.table.Owner
 
 const create_history = (tokenId, event, owner, from="", to="", prevPrice="", currPrice="") => {
   try {
@@ -526,4 +528,35 @@ const add_follow = () => {
     return { create, findAll }
 }
 
-module.exports = { db_profile, db_auction, db_bid, db_history, get_hot_auction, transfer, settle_auction, mint, update_price, add_follow }
+const getNfts = () => {
+  get = (req, res) => {
+    NftItem.find({}, {tokenId: true})
+    .then(data => {
+      res.send({"nftIDs": data})
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while getting NFTs"
+      })
+    })
+  }
+
+  return { get }
+}
+
+const getOwners = () => {
+  get = (req, res) => {
+    Owner.find({})
+    .then(data => {
+      res.send({"owners": data})
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while getting owners"
+      })
+    })
+  }
+
+  return { get }
+}
+module.exports = { db_profile, db_auction, db_bid, db_history, get_hot_auction, transfer, settle_auction, mint, update_price, add_follow, getNfts, getOwners }

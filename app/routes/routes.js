@@ -26,7 +26,7 @@ var upload = multer({
 });
 
 module.exports = app => {
-  const { db_profile, db_auction, db_bid, db_history, get_hot_auction, transfer, settle_auction, mint, update_price, add_follow } = require("../controllers/controller.js");
+  const { db_profile, db_auction, db_bid, db_history, get_hot_auction, transfer, settle_auction, mint, update_price, add_follow, getNfts, getOwners } = require("../controllers/controller.js");
   var router = require("express").Router();
 
   // *************** Profile ******************************
@@ -72,6 +72,12 @@ module.exports = app => {
   router.post("/follow/create", add_follow().create);
 
   router.post("/follow/all", add_follow().findAll);
+
+  // ******** get nfts ******
+  router.get('/nfts', getNfts().get)
   
+  // ******** get owners ****
+  router.get('/owners', getOwners().get)
+
   app.use("/api", router);
 };

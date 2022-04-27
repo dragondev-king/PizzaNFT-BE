@@ -88,9 +88,8 @@ module.exports = mongoose => {
 
   var nftItem = mongoose.Schema(
     {
-      id: Number
+      tokenId: Number
     },
-    { timestamps: true }
   )
   nftItem.method("toJSON", function() {
     const { __v, _id, ...object } = this.toObject();
@@ -106,7 +105,6 @@ module.exports = mongoose => {
       tokenId: Number,
       ownerOf: String
     },
-    {timestamps: true}
   )
   owner.method("toJSON", function() {
     const { __v, _id, ...object } = this.toObject();
