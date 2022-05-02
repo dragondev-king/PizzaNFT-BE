@@ -5,6 +5,8 @@ const Auction = db.table.Auction;
 const Bid = db.table.Bid;
 const History = db.table.History;
 const Follow = db.table.Follow;
+const NftItem = db.table.NftItem
+const Owner = db.table.Owner
 
 const create_history = (tokenId, event, owner, from="", to="", prevPrice="", currPrice="") => {
   try {
@@ -526,4 +528,60 @@ const add_follow = () => {
     return { create, findAll }
 }
 
-module.exports = { db_profile, db_auction, db_bid, db_history, get_hot_auction, transfer, settle_auction, mint, update_price, add_follow }
+const getNfts = () => {
+  get = (req, res) => {
+    const offset = Number(req.query.offset)
+    const limit = Number(req.query.limit)
+    NftItem.find({}, {tokenId: true}).skip(offset).limit(limit)
+    .then(data => {
+      NftItem.estimatedDocumentCount()
+      .then(count => {
+        res.send({total: count, "nftIDs": data})
+      })
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while getting NFTs"
+      })
+    })
+  }
+
+  return { get }
+}
+
+const getOwners = () => {
+  get = (req, res) => {
+    Owner.find({})
+    .then(data => {
+      Owner.estimatedDocumentCount()
+      .then(count => {
+        res.send({total: count, "owners": data})
+      })
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while getting owners"
+      })
+    })
+  }
+
+  return { get }
+}
+
+const getNftsByAccount = () => {
+  get = (req, res) => {
+    const offset = Number(req.query.offset)
+    const limit = Number(req.query.limit)
+    const account = req.params.account.toLowerCase()
+    Owner.find({ownerOf: account})
+    .then(total => {
+      Owner.find({ownerOf: account}, {tokenId: true}).skip(offset).limit(limit)
+      .then((data) => {
+        res.send({total: total.length, "nftIDs": data})
+      })
+    })
+  }
+
+  return { get }
+}
+module.exports = { db_profile, db_auction, db_bid, db_history, get_hot_auction, transfer, settle_auction, mint, update_price, add_follow, getNfts, getOwners, getNftsByAccount }
