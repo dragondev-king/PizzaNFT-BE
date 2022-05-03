@@ -116,7 +116,10 @@ const db_profile = () => {
       profileUrl: req.body.profileUrl,
       email: req.body.email,
       facebook: req.body.facebook,
-      bio: req.body.bio
+      bio: req.body.bio,
+      instagram: req.body.instagram,
+      discord: req.body.discord,
+      twitter: req.body.twitter
     }};
     if(req.files['profileImg']) profile.$set.profileImg = url + '/profiles/' + req.files['profileImg'][0].filename
     if(req.files['coverImg']) profile.$set.coverImg = url + '/profiles/' + req.files['coverImg'][0].filename

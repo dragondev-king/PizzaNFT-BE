@@ -8,7 +8,10 @@ module.exports = mongoose => {
       coverImg: String,
       email: String,
       facebook: String,
-      bio: String
+      bio: String,
+      instagram: String,
+      discord: String,
+      twitter: String
     },
     { timestamps: true }
   );
